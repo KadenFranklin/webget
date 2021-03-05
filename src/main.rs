@@ -1,4 +1,4 @@
-use std::{io, env};
+use std::{io, env, process};
 use std::io::{Write,Read};
 use std::fs::File;
 use std::ffi::CString;
@@ -36,18 +36,27 @@ fn main() -> io::Result<()> {
             ("GET {} HTTP/1.1
 Host: {}
 Connection: Close
+
 ", this.file, this.host);
             socket.write(message.as_bytes())?;
             let mut reply = String::new();
             socket.read_to_string(&mut reply)?;
-            let new_filename = format!("{}.txt", this.file);
-            let mut buffer = File::create(new_filename)?;
-            println!("reply: {}",reply);
-            if reply.trim() == "" {
-                buffer.write_all(reply.as_bytes())?;
-                println!("done!");
+            for line in reply.lines() {
+                println!("{}", line);
+                if line.trim() == "" {
+                    let s = path.to_str().unwrap();
+                    let s1 = this.file.split("/").last().unwrap();
+                    let new_filename = format!("{}/{}.txt",s, s1);
+                    let mut buffer = File::create(new_filename)?;
+                    buffer.write(reply.as_bytes())?;
+                }
             }
+
         }
+        if input.trim() == "exit"{
+            process::exit(0x0100);
+        }
+
         else {
             match unsafe { fork() }.unwrap() {
                 ForkResult::Parent { child } => {
