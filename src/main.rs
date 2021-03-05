@@ -40,14 +40,12 @@ Connection: Close
             socket.write(message.as_bytes())?;
             let mut reply = String::new();
             socket.read_to_string(&mut reply)?;
-            println!("done!");
             let new_filename = format!("{}.txt", this.file);
             let mut buffer = File::create(new_filename)?;
             println!("reply: {}",reply);
             if reply.trim() == "" {
                 buffer.write_all(reply.as_bytes())?;
                 println!("done!");
-                Ok(())
             }
         }
         else {
