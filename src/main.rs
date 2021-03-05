@@ -51,7 +51,6 @@ Connection: Close
                     buffer.write(reply.as_bytes())?;
                 }
             }
-
         }
         if input.trim() == "exit"{
             process::exit(0x0100);
